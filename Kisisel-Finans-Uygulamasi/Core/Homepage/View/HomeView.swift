@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct HomeView: View {
@@ -9,6 +8,7 @@ struct HomeView: View {
     ]
     
     @State var selectionPicker: CategoryType = .expense
+    @State private var showingStatistics = false
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var homeViewModel: HomeViewModel
@@ -49,7 +49,6 @@ struct HomeView: View {
                 }
                 
                 HStack {
-                    
                     NavigationLink {
                         AddView()
                     } label: {
@@ -81,16 +80,31 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    ProfileView(user: authViewModel.currentUser)
-                } label: {
-                    Image(systemName: "person")
-                        .frame(width: 35, height: 35)
-                        .foregroundStyle(Color(.white))
-                        .background(Color(.gray))
-                        .clipShape(Circle())
+                HStack(spacing: 15) {
+                    Button {
+                        showingStatistics.toggle()
+                    } label: {
+                        Image(systemName: "chart.pie.fill")
+                            .frame(width: 35, height: 35)
+                            .foregroundStyle(Color(.white))
+                            .background(Color(.gray))
+                            .clipShape(Circle())
+                    }
+                    
+                    NavigationLink {
+                        ProfileView(user: authViewModel.currentUser)
+                    } label: {
+                        Image(systemName: "person")
+                            .frame(width: 35, height: 35)
+                            .foregroundStyle(Color(.white))
+                            .background(Color(.gray))
+                            .clipShape(Circle())
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $showingStatistics) {
+            StatisticsView(homeViewModel: homeViewModel)
         }
     }
 }
