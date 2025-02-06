@@ -9,6 +9,7 @@ struct HomeView: View {
     
     @State var selectionPicker: CategoryType = .expense
     @State private var showingStatistics = false
+    @State private var showingInvestments = false
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var homeViewModel: HomeViewModel
@@ -82,6 +83,16 @@ struct HomeView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: 15) {
                     Button {
+                        showingInvestments.toggle()
+                    } label: {
+                        Image(systemName: "chart.line.uptrend.xyaxis.circle.fill")
+                            .frame(width: 35, height: 35)
+                            .foregroundStyle(Color(.white))
+                            .background(Color(.gray))
+                            .clipShape(Circle())
+                    }
+                    
+                    Button {
                         showingStatistics.toggle()
                     } label: {
                         Image(systemName: "chart.pie.fill")
@@ -105,6 +116,9 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingStatistics) {
             StatisticsView(homeViewModel: homeViewModel)
+        }
+        .sheet(isPresented: $showingInvestments) {
+            InvestmentPortfolioView()
         }
     }
 }

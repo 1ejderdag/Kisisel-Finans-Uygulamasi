@@ -4,6 +4,7 @@ import Charts
 struct StatisticsView: View {
     @ObservedObject var homeViewModel: HomeViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var selectionPicker: CategoryType = .expense
     
     var expensesByCategory: [(category: ExpenseCategories, amount: Float)] {
         var categoryTotals: [ExpenseCategories: Float] = [:]
@@ -11,6 +12,19 @@ struct StatisticsView: View {
         for expense in homeViewModel.expenses {
             if let categoryEnum = ExpenseCategories(rawValue: expense.category) {
                 categoryTotals[categoryEnum, default: 0] += expense.amount
+            }
+        }
+        
+        return categoryTotals.map { ($0.key, $0.value) }
+            .sorted { $0.amount > $1.amount }
+    }
+    
+    var incomesByCategory: [(category: IncomeCategories, amount: Float)] {
+        var categoryTotals: [IncomeCategories: Float] = [:]
+        
+        for income in homeViewModel.incomes {
+            if let categoryEnum = IncomeCategories(rawValue: income.category) {
+                categoryTotals[categoryEnum, default: 0] += income.amount
             }
         }
         
@@ -27,44 +41,100 @@ struct StatisticsView: View {
                         .fontWeight(.bold)
                         .padding(.horizontal)
                     
-                    if !expensesByCategory.isEmpty {
-                        Chart {
-                            ForEach(expensesByCategory, id: \.category) { item in
-                                SectorMark(
-                                    angle: .value("Tutar", item.amount),
-                                    innerRadius: .ratio(0.618),
-                                    angularInset: 1.5
-                                )
-                                .cornerRadius(5)
-                                .foregroundStyle(by: .value("Kategori", item.category.title))
-                            }
+                    // Segmented Picker
+                    Picker("Category type", selection: $selectionPicker) {
+                        ForEach(CategoryType.allCases, id: \.self) { type in
+                            Text("\(type.localizedName())")
                         }
-                        .frame(height: 300)
-                        .padding()
-                        
-                        LazyVStack(alignment: .leading, spacing: 15) {
-                            ForEach(expensesByCategory, id: \.category) { item in
-                                HStack {
-                                    Image(systemName: item.category.iconName)
-                                        .foregroundStyle(Color(.systemBlue))
-                                    
-                                    Text(item.category.title)
-                                        .font(.subheadline)
-                                    
-                                    Spacer()
-                                    
-                                    Text("₺\(String(format: "%.2f", item.amount))")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(10)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .padding(.horizontal)
+                    
+                    if selectionPicker == .expense {
+                        // Giderler Grafiği
+                        if !expensesByCategory.isEmpty {
+                            Chart {
+                                ForEach(expensesByCategory, id: \.category) { item in
+                                    SectorMark(
+                                        angle: .value("Tutar", item.amount),
+                                        innerRadius: .ratio(0.618),
+                                        angularInset: 1.5
+                                    )
+                                    .cornerRadius(5)
+                                    .foregroundStyle(by: .value("Kategori", item.category.title))
                                 }
-                                .padding(.horizontal)
                             }
+                            .frame(height: 300)
+                            .padding()
+                            
+                            LazyVStack(alignment: .leading, spacing: 15) {
+                                ForEach(expensesByCategory, id: \.category) { item in
+                                    HStack {
+                                        Image(systemName: item.category.iconName)
+                                            .foregroundStyle(Color(.systemBlue))
+                                        
+                                        Text(item.category.title)
+                                            .font(.subheadline)
+                                        
+                                        Spacer()
+                                        
+                                        Text("₺\(String(format: "%.2f", item.amount))")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                        } else {
+                            Text("Henüz harcama verisi bulunmamaktadır.")
+                                .font(.subheadline)
+                                .foregroundStyle(.gray)
+                                .padding()
                         }
                     } else {
-                        Text("Henüz harcama verisi bulunmamaktadır.")
-                            .font(.subheadline)
-                            .foregroundStyle(.gray)
+                        // Gelirler Grafiği
+                        if !incomesByCategory.isEmpty {
+                            Chart {
+                                ForEach(incomesByCategory, id: \.category) { item in
+                                    SectorMark(
+                                        angle: .value("Tutar", item.amount),
+                                        innerRadius: .ratio(0.618),
+                                        angularInset: 1.5
+                                    )
+                                    .cornerRadius(5)
+                                    .foregroundStyle(by: .value("Kategori", item.category.title))
+                                }
+                            }
+                            .frame(height: 300)
                             .padding()
+                            
+                            LazyVStack(alignment: .leading, spacing: 15) {
+                                ForEach(incomesByCategory, id: \.category) { item in
+                                    HStack {
+                                        Image(systemName: item.category.iconName)
+                                            .foregroundStyle(Color(.systemGreen))
+                                        
+                                        Text(item.category.title)
+                                            .font(.subheadline)
+                                        
+                                        Spacer()
+                                        
+                                        Text("₺\(String(format: "%.2f", item.amount))")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                        } else {
+                            Text("Henüz gelir verisi bulunmamaktadır.")
+                                .font(.subheadline)
+                                .foregroundStyle(.gray)
+                                .padding()
+                        }
                     }
                 }
             }
