@@ -72,7 +72,7 @@ struct StatisticsView: View {
                             
                             LazyVStack(alignment: .leading, spacing: 15) {
                                 ForEach(expensesByCategory, id: \.category) { item in
-                                    HStack {
+                                    HStack() {
                                         Image(systemName: item.category.iconName)
                                             .foregroundStyle(Color(.systemBlue))
                                         

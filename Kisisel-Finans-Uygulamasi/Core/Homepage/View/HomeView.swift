@@ -119,6 +119,7 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingInvestments) {
             InvestmentPortfolioView()
+                .environmentObject(authViewModel)
         }
     }
 }

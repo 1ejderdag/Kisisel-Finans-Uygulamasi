@@ -12,7 +12,6 @@ class UserService {
             .getDocument { snapshot, _ in
                 guard let snapshot = snapshot else { return }
                 
-                print("Burada hata veriyor")
                 guard let user = try? snapshot.data(as: User.self) else { return }
             
                 print("User email is \(user.email)")

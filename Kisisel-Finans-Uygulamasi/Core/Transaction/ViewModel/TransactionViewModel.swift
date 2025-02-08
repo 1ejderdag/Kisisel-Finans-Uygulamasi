@@ -1,4 +1,3 @@
-
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
@@ -12,7 +11,8 @@ final class TransactionViewModel: ObservableObject{
         let data = ["uid": uid,
                     "amount": amount,
                     "note": note,
-                    "category": category.rawValue] as [String : Any]
+                    "category": category.rawValue,
+                    "date": Timestamp(date: date)] as [String : Any]
         
         Firestore.firestore().collection("expenses").document()
             .setData(data) { error in
@@ -31,7 +31,8 @@ final class TransactionViewModel: ObservableObject{
         let data = ["uid": uid,
                     "amount": amount,
                     "note": note,
-                    "category": category.rawValue] as [String : Any]
+                    "category": category.rawValue,
+                    "date": Timestamp(date: date)] as [String : Any]
         
         Firestore.firestore().collection("incomes").document()
             .setData(data) { error in
