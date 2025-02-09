@@ -10,6 +10,7 @@ struct HomeView: View {
     @State var selectionPicker: CategoryType = .expense
     @State private var showingStatistics = false
     @State private var showingInvestments = false
+    @State private var showingCategoryAdvice = false
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var homeViewModel: HomeViewModel
@@ -50,16 +51,31 @@ struct HomeView: View {
                 }
                 
                 HStack {
-                    NavigationLink {
-                        AddView()
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .frame(width: 55, height: 55)
-                                .foregroundStyle(Color(.black))
-                            Image(systemName: "plus")
-                                .foregroundStyle(Color(.white))
-                                .font(.system(size: 28))
+                    VStack(spacing: 5) {
+                        Button {
+                            showingCategoryAdvice.toggle()
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .frame(width: 45, height: 45)
+                                    .foregroundStyle(Color(.blue))
+                                Image(systemName: "lightbulb.fill")
+                                    .foregroundStyle(Color(.white))
+                                    .font(.system(size: 22))
+                            }
+                        }
+                        
+                        NavigationLink {
+                            AddView()
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .frame(width: 55, height: 55)
+                                    .foregroundStyle(Color(.black))
+                                Image(systemName: "plus")
+                                    .foregroundStyle(Color(.white))
+                                    .font(.system(size: 28))
+                            }
                         }
                     }
                 }
@@ -120,6 +136,9 @@ struct HomeView: View {
         .sheet(isPresented: $showingInvestments) {
             InvestmentPortfolioView()
                 .environmentObject(authViewModel)
+        }
+        .sheet(isPresented: $showingCategoryAdvice) {
+            CategoryAdviceView(homeViewModel: homeViewModel)
         }
     }
 }
