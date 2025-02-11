@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 
+// test@gmail.com
 
 @main
 struct Kisisel_Finans_UygulamasiApp: App {

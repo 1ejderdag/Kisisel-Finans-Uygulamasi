@@ -10,7 +10,7 @@ struct HomeView: View {
     @State var selectionPicker: CategoryType = .expense
     @State private var showingStatistics = false
     @State private var showingInvestments = false
-    @State private var showingCategoryAdvice = false
+    @State private var showingAIChat = false
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @ObservedObject var homeViewModel: HomeViewModel
@@ -52,14 +52,14 @@ struct HomeView: View {
                 
                 HStack {
                     VStack(spacing: 5) {
-                        Button {
-                            showingCategoryAdvice.toggle()
+                        NavigationLink {
+                            AIChatView(homeViewModel: homeViewModel)
                         } label: {
                             ZStack {
                                 Circle()
                                     .frame(width: 45, height: 45)
                                     .foregroundStyle(Color(.blue))
-                                Image(systemName: "lightbulb.fill")
+                                Image(systemName: "brain.head.profile")
                                     .foregroundStyle(Color(.white))
                                     .font(.system(size: 22))
                             }
@@ -137,8 +137,8 @@ struct HomeView: View {
             InvestmentPortfolioView()
                 .environmentObject(authViewModel)
         }
-        .sheet(isPresented: $showingCategoryAdvice) {
-            CategoryAdviceView(homeViewModel: homeViewModel)
+        .sheet(isPresented: $showingAIChat) {
+            AIChatView(homeViewModel: homeViewModel)
         }
     }
 }
